@@ -230,5 +230,42 @@ setTimeout(() => {
     document.getElementById('olMap').style.height = window.innerHeight + 'px';
     map.updateSize();
   };
+
+  var params = new URLSearchParams(window.location.search)
+  // http://localhost:11901/api/data/GetLocationsByScientificId?ScientificNameId=126850
+  for (var p of params) {
+    if (p[0].toLocaleLowerCase() == 'scientificnameid') {
+      // console.log('url', `http://localhost:11901/api/data/GetLocationsByScientificId?${p[0]}=${p[1]}`);
+
+      fetch(`http://localhost:11901/api/data/GetLocationsByScientificId?${p[0]}=${p[1]}`)
+      .then(response => response.json())
+      .then(data => {
+        // console.log('data', JSON.parse(data));
+
+        var styleFunction = (feature) => {
+          return [new ol.style.Style({
+            image: new ol.style.Circle({
+              radius: 5,
+              fill: new ol.style.Fill({
+                color: '#ff0000'
+              }),
+              stroke: new ol.style.Stroke({
+                color: '#000000',
+                width: 2
+              })
+            })
+          })];
+        };
+        var vectorSource = new ol.source.Vector({
+          features: new ol.format.GeoJSON().readFeatures(data),
+        });
+        var vectorLayer = new ol.layer.Vector({
+          source: vectorSource,
+          style: styleFunction,
+        });
+        map.addLayer(vectorLayer);
+      });
+    }
+  }
   
 }, 0);
