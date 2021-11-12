@@ -156,7 +156,8 @@ setTimeout(() => {
         extent: projectionInfo.bounds,
         source: new ol.source.WMTS({
             url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
-            layer: 'egk',
+            // layer: 'egk',
+            layer: 'gebco',
             attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>',
             matrixSet: `EPSG:${epsgCode}`,
             format: 'image/png',
