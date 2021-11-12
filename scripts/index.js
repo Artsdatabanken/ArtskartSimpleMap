@@ -170,7 +170,7 @@ setTimeout(() => {
           wrapX: true,
           crossOrigin: 'anonymous'
         }),
-        visible: false
+        visible: true
       }),
       new ol.layer.Tile({
         opacity: 1,
