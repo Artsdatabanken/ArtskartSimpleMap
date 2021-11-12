@@ -148,9 +148,13 @@ setTimeout(() => {
     resolutions[z] = size / Math.pow(2, z);
     matrixIds[z] = `EPSG:${epsgCode}:${z}`;
   }
+
+  var attribution = new ol.control.Attribution({
+    collapsible: false,
+  });
   
   var map = new ol.Map({
-    controls: ol.control.defaults(),
+    controls: ol.control.defaults({attribution: false}).extend([attribution]),
     layers: [
       // new ol.layer.Tile({
       //   source: new ol.source.OSM(),
@@ -162,7 +166,7 @@ setTimeout(() => {
             url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
             // layer: 'egk',
             layer: 'gebco',
-            attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>',
+            attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>,',
             matrixSet: `EPSG:${epsgCode}`,
             format: 'image/png',
             projection: projection,
@@ -183,7 +187,7 @@ setTimeout(() => {
         source: new ol.source.WMTS({
             url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
             layer: 'norges_grunnkart',
-            attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>',
+            attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>,',
             matrixSet: `EPSG:${epsgCode}`,
             format: 'image/png',
             projection: projection,
@@ -215,7 +219,7 @@ setTimeout(() => {
     var center = map.getView().getCenter();
     var zoom = map.getView().getZoom();
     // console.log(center, zoom);
-    var url = `, <a target='_blank' href='${artskartUrl}#map/${center[0]},${center[1]}/${parseInt(zoom)}/background/NiB/filter/{%22TaxonIds%22:[${taxonId}],%22IncludeSubTaxonIds%22:true%2C%22Found%22:[2]}'>Artskart</a>`;
+    var url = `Funndata i <a target='_blank' href='${artskartUrl}#map/${center[0]},${center[1]}/${parseInt(zoom)}/background/NiB/filter/{%22TaxonIds%22:[${taxonId}],%22IncludeSubTaxonIds%22:true%2C%22Found%22:[2]}'>Artskart</a>`;
     return url;
   }
 
