@@ -1,5 +1,6 @@
 setTimeout(() => {
 
+  var epsgCode = 32633;
   var artskartAppapiUrl = 'https://artskart.artsdatabanken.no/appapi/';
   var artskartUrl = 'https://artskart.artsdatabanken.no/app/';
   var taxonId = 0;
@@ -122,7 +123,6 @@ setTimeout(() => {
     }
   };
 
-  var epsgCode = 32633;
   var projectionInfo = projectionBounds[epsgCode];
 
   // proj4.defs('EPSG:4326', projectionBounds[4326].defs);
@@ -179,14 +179,15 @@ setTimeout(() => {
           wrapX: true,
           crossOrigin: 'anonymous'
         }),
-        visible: true
+        visible: false
       }),
       new ol.layer.Tile({
         opacity: 1,
         extent: projectionInfo.bounds,
         source: new ol.source.WMTS({
             url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
-            layer: 'norges_grunnkart',
+            // layer: 'norges_grunnkart',
+            layer: 'terreng_norgeskart',
             attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>,',
             matrixSet: `EPSG:${epsgCode}`,
             format: 'image/png',
