@@ -1,5 +1,7 @@
 setTimeout(() => {
 
+  var taxonId = 0;
+
   var projectionBounds = {
     23031: {
       bounds: [-1500000.0, 3500000.0, 4045984.0, 9045984.0],
@@ -205,6 +207,16 @@ setTimeout(() => {
     })
   });
 
+  var getArtskartUrl = () => {
+    if (taxonId  == 0) return '';
+
+    var center = map.getView().getCenter();
+    var zoom = map.getView().getZoom();
+    // console.log(center, zoom);
+    var url = `, <a target='_blank' href='https://artskart.artsdatabanken.no/app/#map/${center[0]},${center[1]}/${parseInt(zoom)}/background/NiB/filter/{%22TaxonIds%22:[${taxonId}],%22IncludeSubTaxonIds%22:true%2C%22Found%22:[2]}'>Artskart</a>`;
+    return url;
+  }
+
   var checkInput = () => {
     var params = new URLSearchParams(window.location.search)
     // http://localhost:11901/api/data/GetLocationsByScientificId?ScientificNameId=126850
@@ -234,6 +246,7 @@ setTimeout(() => {
             })];
           };
           var vectorSource = new ol.source.Vector({
+            attributions: getArtskartUrl,
             features: new ol.format.GeoJSON().readFeatures(data),
           });
           var vectorLayer = new ol.layer.Vector({
@@ -251,6 +264,8 @@ setTimeout(() => {
           });
           // }, 100);
         });
+      } else if (p[0].toLocaleLowerCase() == 'taxonid') {
+        taxonId = p[1];
       }
     }
   };
