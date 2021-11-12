@@ -186,8 +186,29 @@ setTimeout(() => {
         extent: projectionInfo.bounds,
         source: new ol.source.WMTS({
             url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
-            // layer: 'norges_grunnkart',
             layer: 'terreng_norgeskart',
+            attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>,',
+            matrixSet: `EPSG:${epsgCode}`,
+            format: 'image/png',
+            projection: projection,
+            tileGrid: new ol.tilegrid.WMTS({
+              origin: ol.extent.getTopLeft(projection.getExtent()),
+              resolutions: resolutions,
+              matrixIds: matrixIds
+          }),
+          style: 'default',
+          wrapX: true,
+          crossOrigin: 'anonymous'
+        }),
+        visible: true
+      }),
+      new ol.layer.Tile({
+        opacity: 1,
+        minZoom: 10,
+        extent: projectionInfo.bounds,
+        source: new ol.source.WMTS({
+            url: 'https://opencache.statkart.no/gatekeeper/gk/gk.open_wmts?',
+            layer: 'norges_grunnkart',
             attributions: 'Bakgrunnskart fra: <a href=\'https://www.kartverket.no/kart\'>Kartverket</a>,',
             matrixSet: `EPSG:${epsgCode}`,
             format: 'image/png',
@@ -269,12 +290,12 @@ setTimeout(() => {
   var checkInput = () => {
     var params = new URLSearchParams(window.location.search)
     // http://localhost:11901/api/data/GetLocationsByScientificId?ScientificNameId=126850
-    for (var p of params) {
-      if (p[0].toLocaleLowerCase() == 'scientificnameid') {
-        displayFeaturesById(p[0], p[1]);
-      } else if (p[0].toLocaleLowerCase() == 'taxonid') {
+    params.forEach((value, key) => {
+      if (key.toLocaleLowerCase() == 'scientificnameid') {
+        displayFeaturesById(key, value);
+      } else if (key.toLocaleLowerCase() == 'taxonid') {
         var taxonUrl = `${artskartAppapiUrl}api/data/GetTaxon/?id=`;
-        fetch(`${taxonUrl}${p[1]}`)
+        fetch(`${taxonUrl}${value}`)
         .then(response => response.json())
         .then(data => {
           for(var key in data) {
@@ -287,7 +308,7 @@ setTimeout(() => {
           }
         });
       }
-    }
+    });
   };
 
   var initialMoveend = () => {
