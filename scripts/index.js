@@ -221,51 +221,58 @@ setTimeout(() => {
     var params = new URLSearchParams(window.location.search)
     // http://localhost:11901/api/data/GetLocationsByScientificId?ScientificNameId=126850
     for (var p of params) {
-      if (p[0].toLocaleLowerCase() == 'scientificnameid') {
-        // var url = 'http://localhost:11901/api/data/GetLocationsByScientificId';
-        var url = 'https://artskart.artsdatabanken.no/appapi/api/data/GetLocationsByScientificId';
-        // console.log('url', `${url}?${p[0]}=${p[1]}`);
-
-        fetch(`${url}?${p[0]}=${p[1]}`)
+      if (p[0].toLocaleLowerCase() == 'taxonid') {
+        var taxonUrl = 'https://artskart.artsdatabanken.no/appapi/api/data/GetTaxon/?id=';
+        fetch(`${taxonUrl}${p[1]}`)
         .then(response => response.json())
         .then(data => {
-          // console.log('data', JSON.parse(data));
+          for(var key in data) {
+            if (key.toLocaleLowerCase() == 'id') {
+              taxonId = data[key];
+              continue;
+            }
+            if (key.toLocaleLowerCase() !== 'scientificnameid') continue;
+            var scientificUrl = 'https://artskart.artsdatabanken.no/appapi/api/data/GetLocationsByScientificId';
+            fetch(`${scientificUrl}?${key}=${data[key]}`)
+            .then(response => response.json())
+            .then(data => {
+              // console.log('data', JSON.parse(data));
 
-          var styleFunction = (feature) => {
-            return [new ol.style.Style({
-              image: new ol.style.Circle({
-                radius: 5,
-                fill: new ol.style.Fill({
-                  color: '#ff0000'
-                }),
-                stroke: new ol.style.Stroke({
-                  color: '#000000',
-                  width: 2
-                })
-              })
-            })];
-          };
-          var vectorSource = new ol.source.Vector({
-            attributions: getArtskartUrl,
-            features: new ol.format.GeoJSON().readFeatures(data),
-          });
-          var vectorLayer = new ol.layer.Vector({
-            source: vectorSource,
-            style: styleFunction,
-          });
-          map.addLayer(vectorLayer);
-          // setTimeout(() => {
-          var mapSize = map.getSize();
-          var pad = parseInt(Math.min(mapSize[0], mapSize[1]) / 3);
-          map.getView().fit(vectorSource.getExtent(), {
-            padding: [pad, pad, pad, pad],
-            nearest: false,
-            size: map.getSize()
-          });
-          // }, 100);
+              var styleFunction = () => {
+                return [new ol.style.Style({
+                  image: new ol.style.Circle({
+                    radius: 5,
+                    fill: new ol.style.Fill({
+                      color: '#ff0000'
+                    }),
+                    stroke: new ol.style.Stroke({
+                      color: '#000000',
+                      width: 2
+                    })
+                  })
+                })];
+              };
+              var vectorSource = new ol.source.Vector({
+                attributions: getArtskartUrl,
+                features: new ol.format.GeoJSON().readFeatures(data),
+              });
+              var vectorLayer = new ol.layer.Vector({
+                source: vectorSource,
+                style: styleFunction,
+              });
+              map.addLayer(vectorLayer);
+              // setTimeout(() => {
+              var mapSize = map.getSize();
+              var pad = parseInt(Math.min(mapSize[0], mapSize[1]) / 3);
+              map.getView().fit(vectorSource.getExtent(), {
+                padding: [pad, pad, pad, pad],
+                nearest: false,
+                size: map.getSize()
+              });
+              // }, 100);
+            });
+          }
         });
-      } else if (p[0].toLocaleLowerCase() == 'taxonid') {
-        taxonId = p[1];
       }
     }
   };
